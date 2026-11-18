@@ -1,6 +1,6 @@
 # Stressful events in the European power system under climate change (v0.3)
 
-[![tests](https://github.com/michaelserikov/eu-power-stress-storylines/actions/workflows/tests.yml/badge.svg)](https://github.com/michaelserikov/eu-power-stress-storylines/actions/workflows/tests.yml)
+[![tests](https://github.com/serikov-energy-systems/eu-power-stress-storylines/actions/workflows/tests.yml/badge.svg)](https://github.com/serikov-energy-systems/eu-power-stress-storylines/actions/workflows/tests.yml)
 
 This project starts from stressful periods that the European electricity system has actually lived through in 2015-2025, builds a weather-only stress index that reproduces them, and then asks how such periods change in frequency, duration, severity and spatial extent between the present climate (1995-2014) and the end of the century under SSP3-7.0 (2080-2099). The climate side is [Climate2Energy](https://doi.org/10.1088/2753-3751/ae2870) (C2E): bias-corrected CESM2 converted to country-level wind, solar, heating, cooling and hydro series, three realizations. The net-load set-up follows Bloin-Wibe et al. (2026, ERL, [doi 10.1088/1748-9326/ae5727](https://doi.org/10.1088/1748-9326/ae5727)) and is reproduced first.
 
@@ -69,7 +69,7 @@ The paper reports about +30% high-net-load events for wind-dominated systems wit
 - **Firm backup**: European net-load peaks fall slightly (400 to 387 GW balanced, 371 to 363 GW high wind); the 99.9th percentile changes by less than 5 GW.
 - **Demand flexibility**: moving 5% of each day's demand within the day lowers the European peak from 413 to 337 GW (realization A, present), 10% to 301 GW.
 
-**Capacity expansion on stress vs normal years (WP5, PyPSA).** The 12-country model of [eu-weather-years-pypsa](https://github.com/michaelserikov/eu-weather-years-pypsa) (transport model with AC and HVDC limits, existing nuclear and hydro, extendable wind, PV, batteries, hydrogen and backup, load shedding at 8000 EUR/MWh, 6-hour steps), driven by Climate2Energy realization A. The stress year has the highest 7-day net load of a fixed balanced fleet, the normal year sits at the median:
+**Capacity expansion on stress vs normal years (WP5, PyPSA).** The 12-country model of [eu-weather-years-pypsa](https://github.com/serikov-energy-systems/eu-weather-years-pypsa) (transport model with AC and HVDC limits, existing nuclear and hydro, extendable wind, PV, batteries, hydrogen and backup, load shedding at 8000 EUR/MWh, 6-hour steps), driven by Climate2Energy realization A. The stress year has the highest 7-day net load of a fixed balanced fleet, the normal year sits at the median:
 
 | Design year | system cost (bn EUR/yr) | onshore wind (GW) | PV (GW) | battery (GWh) | backup (GW) |
 |---|---|---|---|---|---|

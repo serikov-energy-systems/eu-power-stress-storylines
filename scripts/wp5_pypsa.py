@@ -2,7 +2,7 @@
 
 Model: the greenfield-renewables country model of northwestern Europe (12 countries, transport model with AC and HVDC
 limits, existing nuclear and hydro, extendable wind, PV, batteries, hydrogen storage and backup, load shedding at
-8000 EUR/MWh) from github.com/michaelserikov/eu-weather-years-pypsa (same author), imported from its source folder
+8000 EUR/MWh) from github.com/serikov-energy-systems/eu-weather-years-pypsa (same author), imported from its source folder
 (WEATHERYEARS_SRC). Here it is driven by Climate2Energy weather instead of renewables.ninja: C2E wind (onshore,
 offshore) and PV capacity factors, and demand = baseline + C2E heating + cooling (current electrification).
 For realization A (B and C with WP5_REALS=ABC) and both periods: the stress year (highest 7-day mean net load of the 12 countries for a
