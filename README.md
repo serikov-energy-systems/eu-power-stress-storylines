@@ -144,6 +144,22 @@ Each design operated with fixed capacities on another year:
 - **Events.** Exceedances of a threshold (hourly), gaps of up to 6 hours merged; duration, severity (energy above the threshold), peak; spatial extent (countries simultaneously above their own P98), co-occurrence; GPD return levels of severity (peaks over the 70th percentile); signal-to-noise = change / sqrt(block-bootstrap variance of a 20-year mean in both periods + variance across realizations of the present mean).
 - **Weather-only index** (WP1): C3S ERA5 country capacity factors x the 2024 fleet, normalised to the 1991-2025 mean; daily demand per country from HDD (15.5 °C) and CDD (22 °C) with weekday, holiday and trend terms, OLS on observed load 2015-2025, level frozen at 2024.
 
+## v0.4: highRES windows and a regional climate model resolution test (22 Nov 2026)
+
+**highRES (open GAMS model, MIT), stress against normal window.** Two zones, 84 hours, instances built by `highres/make_instance.py` from the stress window (5 Jan 2021) and a normal window (11 Nov 2020); solved with HiGHS inside the GAMS demonstration licence (2,000 rows and columns), which is why the instance is small (1,889 rows). Results: `results/v04/highres_windows.csv`. The stress window costs 73.7 EUR/MWh against 58.2 in the normal window (cost 880 against 541 m EUR, demand 11.9 against 9.3 TWh). The solar capacity of 589 GW in the stress window is an artefact, not a result: the carbon limit of highRES was hard-coded (I raised it to 50 so gas stays available), there is no renewable share target, the window is 84 hours and the prices are assumed, so only the direction (a stress window needs a larger and more flexible fleet) is read from it. No penalty generation in either run.
+
+**EURO-CORDEX against a coarse grid.** One EURO-CORDEX run (CNRM-CM5 driving CLMcom-ETH-COSMO-crCLIM-v1-1, EUR-11, 0.11 degrees, daily 10 m wind, historical 1996-2005 and RCP8.5 2091-2100) is turned into a capacity factor (power law 0.143 to 129 m, generic power curve 3 / 10.5 / 25 m/s on daily mean wind) once cell by cell and once after averaging boxes of 11 x 9 cells (1.25 x 0.94 degrees, the Climate2Energy grid). A spell is at least two days with wind below the cell own historical 10th percentile. Script `scripts/wp7_cordex_resolution.py`, table `results/v04/cordex_resolution.csv`.
+
+| Region | Cells fine / coarse | Mean CF hist, fine / coarse | Change in spells per year, fine / coarse | Mean spell length hist (days), fine / coarse |
+|---|---|---|---|---|
+| Alps | 678 / 8 | 0.006 / 0.001 | +1.25 / +2.88 | 2.55 / 2.77 |
+| Balkans | 1895 / 20 | 0.074 / 0.064 | +1.10 / +1.50 | 2.63 / 2.68 |
+| North German plain | 541 / 6 | 0.175 / 0.172 | +0.85 / +1.22 | 2.43 / 2.44 |
+
+Reading: in the flat control region the two grids agree on the mean (0.175 against 0.172); in the Alps the coarse grid loses almost all of the mean output (0.001) and gives a change in low-wind spells 2.3 times that of the fine grid, in the Balkans 1.4 times, on the plain 1.4 times. The spatial spread of the change in mean capacity factor is 0.003 (Alps, fine) against 0.001 (coarse). What this shows is that the signal in low-wind spell frequency depends on the grid in terrain; it does not show which grid is right.
+
+Limits: one regional model driven by one global model, one realization, ten years per period, no significance test (the coarse grid has only 6 to 20 cells per region); RCP8.5 not SSP3-7.0; daily mean wind, so absolute capacity factors are low (Alpine valley cells at 10 m are below the cut-in speed on most days, hence 0.006) and not comparable with Climate2Energy levels. A first run defined spells on the capacity factor and gave 39-day Alpine spells because the capacity factor is zero on more than 10% of days; the definition was changed to wind speed and the table above is from the corrected run.
+
 ## Limitations
 
 - One climate model (CESM2), one scenario, three realizations; 20-year periods make return levels beyond 20 years extrapolation.

@@ -78,11 +78,15 @@ def block_mean(a, mask):
         return np.nanmean(b, axis=(2, 4))
 
 
-def stats(cf_h, cf_f, years_h, years_f):
-    thr = np.nanpercentile(cf_h, 10, axis=0)
+def stats(u_h, u_f, years_h, years_f):
+    """Spells are defined on wind speed (below the cell's own historical 10th percentile), not on capacity factor:
+    in sheltered terrain the capacity factor is exactly 0 on more than 10% of days and a capacity-factor threshold would
+    flag every zero day (first run of 22 Nov gave 39-day spells in the Alps for that reason)."""
+    thr = np.nanpercentile(u_h, 10, axis=0)
     r = {}
-    for tag, c, y in (("hist", cf_h, years_h), ("fut", cf_f, years_f)):
-        low = c <= thr[None]
+    for tag, u, y in (("hist", u_h, years_h), ("fut", u_f, years_f)):
+        c = cf(u)
+        low = u <= thr[None]
         n, dur = spells(low)
         r[tag] = {"mean_cf": np.nanmean(c, axis=0), "spells_yr": n / y, "dur": dur, "low_share": low.mean(axis=0)}
     return r
@@ -96,8 +100,8 @@ for name in REGIONS:
     uf, _ = F[name]
     uh = np.where(mask[None], uh, np.nan)
     uf = np.where(mask[None], uf, np.nan)
-    fine = stats(cf(uh), cf(uf), yh, yf)
-    coarse = stats(cf(block_mean(uh, mask)), cf(block_mean(uf, mask)), yh, yf)
+    fine = stats(uh, uf, yh, yf)
+    coarse = stats(block_mean(uh, mask), block_mean(uf, mask), yh, yf)
     for res, s in (("0.11 deg", fine), ("1.25 x 0.94 deg", coarse)):
         d = {k: float(np.nanmean(s["fut"][k]) - np.nanmean(s["hist"][k])) for k in ("mean_cf", "spells_yr", "low_share")}
         rows.append({"region": name, "resolution": res, "cells": int(np.isfinite(s["hist"]["mean_cf"]).sum()),
