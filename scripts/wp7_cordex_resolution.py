@@ -92,25 +92,26 @@ def stats(u_h, u_f, years_h, years_f):
     return r
 
 
-rows, spatial = [], []
-H, F = load("historical"), load("rcp85")
-yh, yf = 10, 10
-for name in REGIONS:
-    uh, mask = H[name]
-    uf, _ = F[name]
-    uh = np.where(mask[None], uh, np.nan)
-    uf = np.where(mask[None], uf, np.nan)
-    fine = stats(uh, uf, yh, yf)
-    coarse = stats(block_mean(uh, mask), block_mean(uf, mask), yh, yf)
-    for res, s in (("0.11 deg", fine), ("1.25 x 0.94 deg", coarse)):
-        d = {k: float(np.nanmean(s["fut"][k]) - np.nanmean(s["hist"][k])) for k in ("mean_cf", "spells_yr", "low_share")}
-        rows.append({"region": name, "resolution": res, "cells": int(np.isfinite(s["hist"]["mean_cf"]).sum()),
-                     "mean_cf_hist": float(np.nanmean(s["hist"]["mean_cf"])), "mean_cf_fut": float(np.nanmean(s["fut"]["mean_cf"])),
-                     "spells_per_yr_hist": float(np.nanmean(s["hist"]["spells_yr"])), "spells_per_yr_fut": float(np.nanmean(s["fut"]["spells_yr"])),
-                     "spell_len_hist": float(np.nanmean(s["hist"]["dur"])), "spell_len_fut": float(np.nanmean(s["fut"]["dur"])),
-                     "d_mean_cf": d["mean_cf"], "d_spells_yr": d["spells_yr"], "d_low_share": d["low_share"],
-                     "spatial_sd_mean_cf_hist": float(np.nanstd(s["hist"]["mean_cf"])),
-                     "spatial_sd_d_mean_cf": float(np.nanstd(s["fut"]["mean_cf"] - s["hist"]["mean_cf"]))})
-res = pd.DataFrame(rows)
-res.to_csv(OUT / "cordex_resolution.csv", index=False)
-print(res.round(3).T.to_string())
+if __name__ == "__main__":
+    rows, spatial = [], []
+    H, F = load("historical"), load("rcp85")
+    yh, yf = 10, 10
+    for name in REGIONS:
+        uh, mask = H[name]
+        uf, _ = F[name]
+        uh = np.where(mask[None], uh, np.nan)
+        uf = np.where(mask[None], uf, np.nan)
+        fine = stats(uh, uf, yh, yf)
+        coarse = stats(block_mean(uh, mask), block_mean(uf, mask), yh, yf)
+        for res, s in (("0.11 deg", fine), ("1.25 x 0.94 deg", coarse)):
+            d = {k: float(np.nanmean(s["fut"][k]) - np.nanmean(s["hist"][k])) for k in ("mean_cf", "spells_yr", "low_share")}
+            rows.append({"region": name, "resolution": res, "cells": int(np.isfinite(s["hist"]["mean_cf"]).sum()),
+                         "mean_cf_hist": float(np.nanmean(s["hist"]["mean_cf"])), "mean_cf_fut": float(np.nanmean(s["fut"]["mean_cf"])),
+                         "spells_per_yr_hist": float(np.nanmean(s["hist"]["spells_yr"])), "spells_per_yr_fut": float(np.nanmean(s["fut"]["spells_yr"])),
+                         "spell_len_hist": float(np.nanmean(s["hist"]["dur"])), "spell_len_fut": float(np.nanmean(s["fut"]["dur"])),
+                         "d_mean_cf": d["mean_cf"], "d_spells_yr": d["spells_yr"], "d_low_share": d["low_share"],
+                         "spatial_sd_mean_cf_hist": float(np.nanstd(s["hist"]["mean_cf"])),
+                         "spatial_sd_d_mean_cf": float(np.nanstd(s["fut"]["mean_cf"] - s["hist"]["mean_cf"]))})
+    res = pd.DataFrame(rows)
+    res.to_csv(OUT / "cordex_resolution.csv", index=False)
+    print(res.round(3).T.to_string())
