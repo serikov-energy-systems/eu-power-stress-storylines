@@ -1,4 +1,4 @@
-# Stressful events in the European power system under climate change (v0.3)
+# Stressful events in the European power system under climate change (v0.4)
 
 [![tests](https://github.com/serikov-energy-systems/eu-power-stress-storylines/actions/workflows/tests.yml/badge.svg)](https://github.com/serikov-energy-systems/eu-power-stress-storylines/actions/workflows/tests.yml)
 
